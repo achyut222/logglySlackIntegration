@@ -52,9 +52,8 @@ if (action.indexOf("upload=file") > -1) {
 if (action.indexOf("upload=json") > -1) {
     // Upload JSON **************************
     var json = action.split("=")[2];
-    var buf = Buffer.from(JSON.stringify({
-        test: "Hello from AWS SDK"
-    }));
+    json = JSON.parse(json);
+    var buf = Buffer.from(JSON.stringify(json));
     uploadParams.Body = buf;
     // **************************
 }
