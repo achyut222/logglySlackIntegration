@@ -1,4 +1,4 @@
-var Slack = require('slack-node');
+var Slack = require("slack-node");
 var webhookUri = `https://hooks.slack.com/services/${process.env.SLACK_WEBHOOK_PATH}`;
  
 var slack = new Slack();
@@ -11,30 +11,6 @@ slack.setWebhook(webhookUri);
 
 // console.log(geo);
 
-exports.handler = (input, context, callback) => {
-    // console.log("IN FROM GATEWAY:", input);
-    var response = {};
-    var requestType = input.requestContext && input.requestContext.httpMethod;
-    
-    if (!requestType || requestType === "GET") {
-        response = getGenericResponse();
-    }
-    else {
-        // parse the body that comes in as a string
-        var logglyJson = JSON.parse(input.body || "{}");
-        var filteredJson = filterLogglyJson(logglyJson);
-        var slackMessage = formatSlackMessage(filteredJson);
-        postToSlack(slackMessage);
-        response = formatGatewayResponse(200, {}, {text: slackMessage}, false);
-    }
-    
-    callback(null, response);
-};
-
-function getGenericResponse() {
-    return formatGatewayResponse(200, {"my_header": "header_value"}, {"message": "hello from lambda"}, false);
-}
-
 function formatGatewayResponse(statusCode, headers, body, isBase64Encoded) {
     return {
         statusCode,
@@ -42,6 +18,10 @@ function formatGatewayResponse(statusCode, headers, body, isBase64Encoded) {
         "body": JSON.stringify(body),
         isBase64Encoded
     };
+}
+
+function getGenericResponse() {
+    return formatGatewayResponse(200, {"my_header": "header_value"}, {"message": "hello from lambda"}, false);
 }
 
 function filterLogglyJson(logglyJson) {
@@ -79,3 +59,23 @@ function postToSlack(message) {
         console.log("SLACK FAILED");
     }
 }
+
+exports.handler = (input, context, callback) => {
+    // console.log("IN FROM GATEWAY:", input);
+    var response = {};
+    var requestType = input.requestContext && input.requestContext.httpMethod;
+    
+    if (!requestType || requestType === "GET") {
+        response = getGenericResponse();
+    }
+    else {
+        // parse the body that comes in as a string
+        var logglyJson = JSON.parse(input.body || "{}");
+        var filteredJson = filterLogglyJson(logglyJson);
+        var slackMessage = formatSlackMessage(filteredJson);
+        postToSlack(slackMessage);
+        response = formatGatewayResponse(200, {}, {text: slackMessage}, false);
+    }
+    
+    callback(null, response);
+};
