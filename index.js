@@ -14,7 +14,7 @@ slack.setWebhook(webhookUri);
 exports.handler = (input, context, callback) => {
     // console.log('IN FROM GATEWAY:', input)
     var response = {}
-    var requestType = input.requestContext ? input.requestContext.httpMethod : null
+    var requestType = input.requestContext && input.requestContext.httpMethod
     
     if (!requestType || requestType === 'GET') {
         response = getGenericResponse()
