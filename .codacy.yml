@@ -1,3 +1,4 @@
 exclude_paths:
+  - 'index.test.js'
   - 'jest.config.js'
   - 'package.json'
