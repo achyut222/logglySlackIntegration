@@ -4,76 +4,66 @@ AWS.config.credentials = credentials;
 AWS.config.update({ region: "us-east-1" });
 s3 = new AWS.S3({ apiVersion: "2006-03-01" });
 
-// var bucketParams = {
-//     Bucket: "loggly-ips"
-// };
+var Bucket = process.argv[2];
+var Key = process.argv[3];
+var action = process.argv[4];
 
-// s3.listObjects(bucketParams, function (err, data) {
-//     if (err) {
-//         console.log("Error", err);
-//     } else {
-//         console.log("Success", data);
-//     }
-// });
-
-var params = {
-    Bucket: "loggly-ips",
-    Key: "jest.config.js"
-};
-
-s3.getObject(params, function (err, data) {
-    if (err) console.log(err, err.stack);
-    else { 
-        console.log(data.Body.toString('utf-8'));
-        handleS3Object(JSON.parse(data.Body.toString('utf-8')))
-    }
-});
-
-function handleS3Object (object) {
-    console.log('here', object.collectCoverageFrom);
+var uploadParams = {
+    Bucket,
+    Key
 }
 
-/** 
- * For uploading a file
-*/
-// var fs = require("fs");
-// var fileStream = fs.createReadStream('./jest.config.js');
-// fileStream.on("error", function (err) {
-//     console.log("File Error", err);
-// });
-// bucketParams.Body = fileStream;
-// bucketParams.Key = "jest.config.js";
+if (action === "list") {
+    // List Objects **************************
+    s3.listObjects({Bucket}, function (err, data) {
+        if (err) {
+            console.log("Error", err);
+        } else {
+            console.log("Success", data);
+        }
+    });
+    // **************************
+}
 
-/** 
- * For uploading an object from json
-*/
-// var uploadParams = {
-//     Bucket: "loggly-ips",
-//     Key: "jest.config.js",
-//     Body: ""
-// }
+if (action === "get") {
+    // Get Object **************************
+    s3.getObject({ Bucket, Key}, function (err, data) {
+        if (err) console.log(err, err.stack);
+        else {
+            console.log(data.Body.toString("utf-8"));
+            console.log(JSON.parse(data.Body.toString("utf-8")));
+        }
+    });
+    // **************************
+}
 
-// var buf = Buffer.from(JSON.stringify({
-//     verbose: true,
-//     rootDir: './',
-//     collectCoverage: true,
-//     collectCoverageFrom: [
-//         "*.{js,jsx}",
-//         "!**/node_modules/**",
-//         "!**/vendor/**",
-//         "!index.test.js",
-//         "!jest.config.js"
-//     ],
-//     coverageDirectory: "coverage",
-//     coverageReporters: ["lcov"]
-// }));
+if (action.indexOf("upload=file") > -1) {
+    // Upload File **************************
+    var file = action.split("=")[2];
+    var fs = require("fs");
+    var fileStream = fs.createReadStream(file);
+    fileStream.on("error", function (err) {
+        console.log("File Error", err);
+    });
+    uploadParams.Body = fileStream
+    // **************************
+}
 
-// uploadParams.Body = buf;
+if (action === "upload=json") {
+    // Upload JSON **************************
+    var buf = Buffer.from(JSON.stringify({
+        test: "Hello from AWS SDK"
+    }));
+    uploadParams.Body = buf;
+    // **************************
+}
 
-// s3.upload(uploadParams, function (err, data) {
-//     if (err) {
-//         console.log("Error", err);
-//     } if (data) {
-//         console.log("Upload Success", data.Location);
-//     }
-// });
+if (action.indexOf("upload") > -1) {
+    s3.upload(uploadParams, function (err, data) {
+        if (err) {
+            console.log("Error", err);
+        } if (data) {
+            console.log("Upload Success", data.Location);
+        }
+    });
+}
