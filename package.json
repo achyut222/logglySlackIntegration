@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/crouchcd/logglySlackIntegration#readme",
   "dependencies": {
+    "aws-sdk": "^2.259.1",
     "slack-node": "^0.1.8"
   },
   "devDependencies": {
