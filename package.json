@@ -1,0 +1,25 @@
+{
+  "name": "logglyslackintegration",
+  "version": "1.0.0",
+  "description": "Lambda endpoint for Loggly message filtering pipeline",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crouchcd/logglySlackIntegration.git"
+  },
+  "author": "Cameron Crouch",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/crouchcd/logglySlackIntegration/issues"
+  },
+  "homepage": "https://github.com/crouchcd/logglySlackIntegration#readme",
+  "dependencies": {
+    "slack-node": "^0.1.8"
+  },
+  "devDependencies": {
+    "jest": "^23.1.0"
+  }
+}
