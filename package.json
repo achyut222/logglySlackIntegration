@@ -4,7 +4,8 @@
   "description": "Lambda endpoint for Loggly message filtering pipeline",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "compress": "tar -zcvf json_formatter.tar.gz ./"
   },
   "repository": {
     "type": "git",
