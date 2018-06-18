@@ -12,16 +12,16 @@ slack.setWebhook(webhookUri);
 // console.log(geo);
 
 exports.handler = (input, context, callback) => {
-    // console.log('IN FROM GATEWAY:', input)
+    // console.log("IN FROM GATEWAY:", input);
     var response = {};
     var requestType = input.requestContext && input.requestContext.httpMethod;
     
-    if (!requestType || requestType === 'GET') {
+    if (!requestType || requestType === "GET") {
         response = getGenericResponse();
     }
     else {
         // parse the body that comes in as a string
-        var logglyJson = JSON.parse(input.body || '{}');
+        var logglyJson = JSON.parse(input.body || "{}");
         var filteredJson = filterLogglyJson(logglyJson);
         var slackMessage = formatSlackMessage(filteredJson);
         postToSlack(slackMessage);
@@ -37,15 +37,15 @@ function getGenericResponse() {
 
 function formatGatewayResponse(statusCode, headers, body, isBase64Encoded) {
     return {
-        "statusCode": statusCode,
-        "headers": headers,
+        statusCode,
+        headers,
         "body": JSON.stringify(body),
-        "isBase64Encoded": isBase64Encoded
+        isBase64Encoded
     };
 }
 
 function filterLogglyJson(logglyJson) {
-    logglyJson = (logglyJson.recent_hits && logglyJson.recent_hits.length) ? logglyJson.recent_hits[0] : '{}';
+    logglyJson = (logglyJson.recent_hits && logglyJson.recent_hits.length) ? logglyJson.recent_hits[0] : "{}";
     logglyJson = JSON.parse(logglyJson);
     return {
         errorMessage: logglyJson.errorMessage,
@@ -70,12 +70,12 @@ function postToSlack(message) {
     try {
         slack.webhook({ channel: "#webhook-test", text: message}, function(err, response) {
             if (err) {
-                console.log('SLACK ERROR:', err);
+                console.log("SLACK ERROR:", err);
             }
-            console.log('SLACK RESPONSE:', response);
+            console.log("SLACK RESPONSE:", response);
         });
     }
     catch (e) {
-        console.log('SLACK FAILED');
+        console.log("SLACK FAILED");
     }
 }
